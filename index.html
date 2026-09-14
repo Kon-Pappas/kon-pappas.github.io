@@ -8,7 +8,7 @@
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
-            --card-hover: #334155;
+            --card-hover: #1e293b; /* Το background παραμένει ίδιο, παίζουμε με την εικόνα */
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-green: #10b981;
@@ -36,6 +36,8 @@
         header {
             text-align: center;
             margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 10;
         }
 
         header h1 {
@@ -51,12 +53,14 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
+            position: relative;
+            z-index: 10;
         }
 
         @media (max-width: 768px) {
@@ -65,32 +69,72 @@
             }
         }
 
+        /* Βασικό στυλ Κάρτας */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: all 0.25s ease;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
             position: relative;
             overflow: hidden;
-            min-height: 200px;
+            min-height: 220px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
+        /* Container για το κείμενο (πρέπει να είναι πάνω από την εικόνα) */
+        .card-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.95) 100%);
+        }
+
+        /* Εικόνα Background (Sketch Effect) */
+        .card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            /* Εδώ γίνεται η μαγεία της μετατροπής σε μπλε-γκρι sketch/blueprint */
+            filter: grayscale(100%) sepia(30%) hue-rotate(180deg) contrast(1.2) brightness(0.5);
+            opacity: 0.35;
+            transition: all 0.5s ease;
+        }
+
+        /* Hover Effect στις ενεργές κάρτες */
         .card.active:hover {
             transform: translateY(-4px);
-            background-color: var(--card-hover);
             border-color: var(--accent-green);
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15);
         }
 
+        .card.active:hover .card-bg {
+            opacity: 0.6;
+            transform: scale(1.05); /* Ελαφρύ zoom-in */
+            filter: grayscale(80%) sepia(20%) hue-rotate(180deg) contrast(1.1) brightness(0.6);
+        }
+
+        /* Disabled Κάρτες */
         .card.disabled {
-            opacity: 0.65;
             cursor: not-allowed;
+            border-color: #1e293b;
+        }
+        
+        .card.disabled .card-bg {
+            opacity: 0.15;
+            filter: grayscale(100%) contrast(1) brightness(0.3);
         }
 
         .card-header {
@@ -103,40 +147,45 @@
         .card-title {
             font-size: 1.35rem;
             font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .badge {
             font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
             border-radius: 9999px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            backdrop-filter: blur(4px);
         }
 
         .badge.live {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
         .badge.soon {
             background-color: rgba(245, 158, 11, 0.15);
-            color: var(--accent-orange);
+            color: #fbbf24;
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .card-desc {
-            color: var(--text-muted);
+            color: #cbd5e1;
             font-size: 0.95rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
         footer {
             text-align: center;
-            margin-top: 3rem;
+            margin-top: 4rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
         }
 
         .footer-profile {
@@ -168,40 +217,44 @@
     <main class="container">
         <!-- Κάρτα 1: BESS Dashboard -->
         <a href="./bess-dashboard/" class="card active">
-            <div>
+            <div class="card-bg" style="background-image: url('images/bess-bg.jpg');"></div>
+            <div class="card-content">
                 <div class="card-header">
                     <h2 class="card-title">BESS Dashboard</h2>
                     <span class="badge live">Live</span>
                 </div>
-                <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling[cite: 1].</p>
+                <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling.</p>
             </div>
         </a>
 
         <!-- Κάρτα 2: Gas-to-Power -->
         <a href="./gas-power-dashboard/" class="card active">
-            <div>
+            <div class="card-bg" style="background-image: url('images/gas-bg.jpg');"></div>
+            <div class="card-content">
                 <div class="card-header">
                     <h2 class="card-title">Gas-to-Power Analytics</h2>
                     <span class="badge live">Live</span>
                 </div>
-                <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations[cite: 2].</p>
+                <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations.</p>
             </div>
         </a>
 
         <!-- Κάρτα 3: Flows -->
         <div class="card disabled">
-            <div>
+            <div class="card-bg" style="background-image: url('images/flows-bg.jpg');"></div>
+            <div class="card-content">
                 <div class="card-header">
                     <h2 class="card-title">Flows (Imports - Exports)</h2>
                     <span class="badge soon">Coming Soon</span>
                 </div>
-                <p class="card-desc">Cross-border interconnections, Net Transfer Capacities (NTC), and commercial exchange analytics.</p>
+                <p class="card-desc">Cross-border interconnections (Italy, Bulgaria, FYROM, Albania, Turkey), NTC, and exchange analytics.</p>
             </div>
         </div>
 
         <!-- Κάρτα 4: Water & Hydro -->
         <div class="card disabled">
-            <div>
+            <div class="card-bg" style="background-image: url('images/hydro-bg.jpg');"></div>
+            <div class="card-content">
                 <div class="card-header">
                     <h2 class="card-title">BigHydro, Pump, WaterReserve</h2>
                     <span class="badge soon">Coming Soon</span>
