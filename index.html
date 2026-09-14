@@ -41,7 +41,7 @@
         header h1 {
             font-size: 2.2rem;
             font-weight: 700;
-            margin-bottom: 0.5r;
+            margin-bottom: 0.5rem;
             letter-spacing: -0.025em;
         }
 
@@ -135,8 +135,26 @@
         footer {
             text-align: center;
             margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-profile {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .footer-sub {
             color: var(--text-muted);
             font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.75rem;
         }
     </style>
 </head>
@@ -155,7 +173,7 @@
                     <h2 class="card-title">BESS Dashboard</h2>
                     <span class="badge live">Live</span>
                 </div>
-                <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling.</p>
+                <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling[cite: 1].</p>
             </div>
         </a>
 
@@ -166,7 +184,7 @@
                     <h2 class="card-title">Gas-to-Power Analytics</h2>
                     <span class="badge live">Live</span>
                 </div>
-                <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations.</p>
+                <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations[cite: 2].</p>
             </div>
         </a>
 
@@ -194,6 +212,10 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Energy Market Analytics. Hosted on GitHub Pages.</p>
-    </body>
+        <div class="footer-profile">Konstantinos Pappas | Energy Market Analyst</div>
+        <div class="footer-sub">Business Operations & Risk Management | Data Insights on Energy Transition & Grid Stability</div>
+        <div class="footer-copy">&copy; 2026 Energy Market Analytics. Hosted on GitHub Pages.</div>
+    </footer>
+
+</body>
 </html>
