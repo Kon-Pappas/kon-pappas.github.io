@@ -86,7 +86,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        /* Container για το κείμενο */
+        /* Container για το κείμενο (πρέπει να είναι πάνω από την εικόνα) */
         .card-content {
             padding: 2rem;
             position: relative;
@@ -94,10 +94,11 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.95) 100%);
+            /* ΑΛΛΑΓΗ: Πιο διάφανο στο πάνω μέρος (0.3) για να φαίνεται η εικόνα, σκούρο (0.9) κάτω για το κείμενο */
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(30, 41, 59, 0.9) 100%);
         }
 
-        /* Εικόνα Background */
+        /* Εικόνα Background (Sketch Effect) */
         .card-bg {
             position: absolute;
             top: 0;
@@ -107,8 +108,10 @@
             background-size: cover;
             background-position: center;
             z-index: 1;
-            filter: grayscale(100%) sepia(30%) hue-rotate(180deg) contrast(1.2) brightness(0.5);
-            opacity: 0.35;
+            /* ΑΛΛΑΓΗ: Ελαφρώς πιο φωτεινό (brightness 0.6) */
+            filter: grayscale(100%) sepia(30%) hue-rotate(180deg) contrast(1.2) brightness(0.6);
+            /* ΑΛΛΑΓΗ: Η ορατότητα αυξήθηκε στο 60% (από 35%) */
+            opacity: 0.6;
             transition: all 0.5s ease;
         }
 
@@ -120,9 +123,10 @@
         }
 
         .card.active:hover .card-bg {
-            opacity: 0.6;
+            /* ΑΛΛΑΓΗ: Στο hover η ορατότητα πάει στο 95% (από 60%) */
+            opacity: 0.95;
             transform: scale(1.05); 
-            filter: grayscale(80%) sepia(20%) hue-rotate(180deg) contrast(1.1) brightness(0.6);
+            filter: grayscale(80%) sepia(20%) hue-rotate(180deg) contrast(1.1) brightness(0.7);
         }
 
         /* Disabled Κάρτες */
@@ -132,8 +136,8 @@
         }
         
         .card.disabled .card-bg {
-            opacity: 0.15;
-            filter: grayscale(100%) contrast(1) brightness(0.3);
+            opacity: 0.25; /* Ελαφρώς αυξημένο και εδώ */
+            filter: grayscale(100%) contrast(1) brightness(0.4);
         }
 
         .card-header {
