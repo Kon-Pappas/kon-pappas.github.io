@@ -86,7 +86,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        /* Container για το κείμενο (πρέπει να είναι πάνω από την εικόνα) */
+        /* Container για το κείμενο */
         .card-content {
             padding: 2rem;
             position: relative;
@@ -94,11 +94,10 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            /* ΑΛΛΑΓΗ: Πιο διάφανο στο πάνω μέρος (0.3) για να φαίνεται η εικόνα, σκούρο (0.9) κάτω για το κείμενο */
             background: linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(30, 41, 59, 0.9) 100%);
         }
 
-        /* Εικόνα Background (Sketch Effect) */
+        /* Εικόνα Background */
         .card-bg {
             position: absolute;
             top: 0;
@@ -108,9 +107,7 @@
             background-size: cover;
             background-position: center;
             z-index: 1;
-            /* ΑΛΛΑΓΗ: Ελαφρώς πιο φωτεινό (brightness 0.6) */
             filter: grayscale(100%) sepia(30%) hue-rotate(180deg) contrast(1.2) brightness(0.6);
-            /* ΑΛΛΑΓΗ: Η ορατότητα αυξήθηκε στο 60% (από 35%) */
             opacity: 0.6;
             transition: all 0.5s ease;
         }
@@ -123,7 +120,6 @@
         }
 
         .card.active:hover .card-bg {
-            /* ΑΛΛΑΓΗ: Στο hover η ορατότητα πάει στο 95% (από 60%) */
             opacity: 0.95;
             transform: scale(1.05); 
             filter: grayscale(80%) sepia(20%) hue-rotate(180deg) contrast(1.1) brightness(0.7);
@@ -136,7 +132,7 @@
         }
         
         .card.disabled .card-bg {
-            opacity: 0.25; /* Ελαφρώς αυξημένο και εδώ */
+            opacity: 0.25;
             filter: grayscale(100%) contrast(1) brightness(0.4);
         }
 
@@ -191,6 +187,17 @@
             z-index: 10;
         }
 
+        .footer-disclaimer {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
         .footer-profile {
             font-weight: 600;
             color: var(--text-main);
@@ -214,7 +221,7 @@
 
     <header>
         <h1>Greek Energy Market Hub</h1>
-        <p>Real-time telemetry, market clearing mechanisms & asset analytics</p>
+        <p>System telemetry, market clearing mechanisms & asset analytics</p>
     </header>
 
     <main class="container">
@@ -231,7 +238,7 @@
         </a>
 
         <!-- Κάρτα 2: Gas-to-Power -->
-        <a href="./gas-power-dashboard-v2/" class="card active">
+        <a href="./gas-power-dashboard/" class="card active">
             <div class="card-bg" style="background-image: url('images/gas-bg.jpg');"></div>
             <div class="card-content">
                 <div class="card-header">
@@ -242,7 +249,7 @@
             </div>
         </a>
 
-        <!-- Κάρτα 3: Flows (Τώρα Ενεργή) -->
+        <!-- Κάρτα 3: Flows -->
         <a href="./power-flows-dashboard/" class="card active">
             <div class="card-bg" style="background-image: url('images/flows-bg.jpg');"></div>
             <div class="card-content">
@@ -268,6 +275,9 @@
     </main>
 
     <footer>
+        <div class="footer-disclaimer">
+            An independent, continuously evolving analytical tool for the Greek energy market, built and maintained by a single analyst.
+        </div>
         <div class="footer-profile">Konstantinos Pappas | Energy Market Analyst</div>
         <div class="footer-sub">Business Operations & Risk Management | Data Insights on Energy Transition & Grid Stability</div>
         <div class="footer-copy">&copy; 2026 Energy Market Analytics. Hosted on GitHub Pages.</div>
