@@ -125,17 +125,6 @@
             filter: grayscale(80%) sepia(20%) hue-rotate(180deg) contrast(1.1) brightness(0.7);
         }
 
-        /* Disabled Κάρτες */
-        .card.disabled {
-            cursor: not-allowed;
-            border-color: #1e293b;
-        }
-        
-        .card.disabled .card-bg {
-            opacity: 0.25;
-            filter: grayscale(100%) contrast(1) brightness(0.4);
-        }
-
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -149,6 +138,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
+        /* Στυλ Badges */
         .badge {
             font-size: 0.75rem;
             font-weight: 700;
@@ -165,10 +155,10 @@
             border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
-        .badge.soon {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+        .badge.beta {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.4);
         }
 
         .card-desc {
@@ -177,6 +167,66 @@
             line-height: 1.6;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
+
+        /* --- Live Pill Button & Pulse Effect --- */
+        .live-bar {
+            max-width: 1000px;
+            width: 100%;
+            margin: 1.5rem auto 0;
+            display: flex;
+            justify-content: flex-end; /* Στοίχιση δεξιά */
+            position: relative;
+            z-index: 10;
+        }
+
+        .live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background-color: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-pill:hover {
+            background-color: rgba(30, 41, 59, 0.95);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        /* -------------------------------------- */
 
         footer {
             text-align: center;
@@ -224,53 +274,63 @@
         <p>System telemetry, market clearing mechanisms & asset analytics</p>
     </header>
 
-    <main class="container">
-        <!-- Κάρτα 1: BESS Dashboard -->
-        <a href="./bess-dashboard-v2/" class="card active">
-            <div class="card-bg" style="background-image: url('images/bess-bg.jpg');"></div>
-            <div class="card-content">
-                <div class="card-header">
-                    <h2 class="card-title">BESS Dashboard</h2>
-                    <span class="badge live">Live</span>
+    <main>
+        <div class="container">
+            <!-- Κάρτα 1: BESS Dashboard -->
+            <a href="./bess-dashboard-v2/" class="card active">
+                <div class="card-bg" style="background-image: url('images/bess-bg.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2 class="card-title">BESS Dashboard</h2>
+                        <span class="badge live">Live</span>
+                    </div>
+                    <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling.</p>
                 </div>
-                <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling.</p>
-            </div>
-        </a>
+            </a>
 
-        <!-- Κάρτα 2: Gas-to-Power -->
-        <a href="./gas-power-dashboard-v2/" class="card active">
-            <div class="card-bg" style="background-image: url('images/gas-bg.jpg');"></div>
-            <div class="card-content">
-                <div class="card-header">
-                    <h2 class="card-title">Gas-to-Power Analytics</h2>
-                    <span class="badge live">Live</span>
+            <!-- Κάρτα 2: Gas-to-Power -->
+            <a href="./gas-power-dashboard-v2/" class="card active">
+                <div class="card-bg" style="background-image: url('images/gas-bg.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2 class="card-title">Gas-to-Power Analytics</h2>
+                        <span class="badge live">Live</span>
+                    </div>
+                    <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations.</p>
                 </div>
-                <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations.</p>
-            </div>
-        </a>
+            </a>
 
-        <!-- Κάρτα 3: Flows -->
-        <a href="./power-flows-dashboard/" class="card active">
-            <div class="card-bg" style="background-image: url('images/flows-bg.jpg');"></div>
-            <div class="card-content">
-                <div class="card-header">
-                    <h2 class="card-title">Flows (Imports - Exports)</h2>
-                    <span class="badge live">Live</span>
+            <!-- Κάρτα 3: Flows -->
+            <a href="./power-flows-dashboard/" class="card active">
+                <div class="card-bg" style="background-image: url('images/flows-bg.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2 class="card-title">Flows (Imports - Exports)</h2>
+                        <span class="badge live">Live</span>
+                    </div>
+                    <p class="card-desc">Cross-border interconnections (Italy, Bulgaria, FYROM, Albania, Turkey), NTC, and exchange analytics.</p>
                 </div>
-                <p class="card-desc">Cross-border interconnections (Italy, Bulgaria, FYROM, Albania, Turkey), NTC, and exchange analytics.</p>
-            </div>
-        </a>
+            </a>
 
-        <!-- Κάρτα 4: Water & Hydro -->
-        <div class="card disabled">
-            <div class="card-bg" style="background-image: url('images/hydro-bg.jpg');"></div>
-            <div class="card-content">
-                <div class="card-header">
-                    <h2 class="card-title">BigHydro, Pump, WaterReserve</h2>
-                    <span class="badge soon">Coming Soon</span>
+            <!-- Κάρτα 4: Water & Hydro (Τώρα Ενεργή ως BETA) -->
+            <a href="./bighydro-dashboard/" class="card active">
+                <div class="card-bg" style="background-image: url('images/hydro-bg.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2 class="card-title">BigHydro, Pump, WaterReserve</h2>
+                        <span class="badge beta">Beta</span>
+                    </div>
+                    <p class="card-desc">Reservoir level monitoring, pumped storage scheduling, and hydro generation optimization.</p>
                 </div>
-                <p class="card-desc">Reservoir level monitoring, pumped storage scheduling, and hydro generation optimization.</p>
-            </div>
+            </a>
+        </div>
+
+        <!-- Νέα προσθήκη: Live Pill Bar -->
+        <div class="live-bar">
+            <a href="./live-greekpower/" class="live-pill">
+                <span class="pulse-dot"></span>
+                Live ADMIE Telemetry & Market Insights
+            </a>
         </div>
     </main>
 
