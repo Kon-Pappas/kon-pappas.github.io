@@ -1,0 +1,16 @@
+{
+  "name": "Greek Energy Market Hub",
+  "short_name": "Greek Energy",
+  "description": "Independent analytics of the Greek electricity and gas markets from public ADMIE/IPTO, ENTSO-E and HEnEx data.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

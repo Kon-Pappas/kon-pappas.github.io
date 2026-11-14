@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greek Energy Market Hub · Konstantinos Pappas</title>
     <meta name="description" content="Independent analytics of the Greek electricity and gas markets from public ADMIE/IPTO, ENTSO-E and HEnEx data: system balance, BESS, gas-to-power, cross-border flows and hydro.">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Greek Energy">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         :root {
             --bg: #0f172a;
@@ -107,6 +115,20 @@
             .card-title { font-size: .98rem; }
             .card.hero .card-title { font-size: 1.15rem; }
         }
+
+        /* ---- Πρόταση εγκατάστασης (μόνο κινητό, από τη 2η επίσκεψη) ---- */
+        .inst { position: fixed; left: .6rem; right: .6rem; bottom: calc(.6rem + env(safe-area-inset-bottom)); z-index: 50; display: none; align-items: center; gap: .75rem; padding: .7rem .75rem; background: #1e293b; border: 1px solid #475569; border-radius: 12px; box-shadow: 0 10px 30px -8px rgba(0,0,0,.7); }
+        .inst.show { display: flex; }
+        .toast { position: fixed; left: 50%; top: 1rem; transform: translateX(-50%); z-index: 60; width: min(92vw, 440px); background: #e2e8f0; color: #0f172a; font-size: .85rem; font-weight: 600; line-height: 1.4; padding: .7rem 1rem; border-radius: 10px; box-shadow: 0 10px 30px -8px rgba(0,0,0,.7); text-align: center; }
+        body.inst-on { padding-bottom: 7.5rem; }   /* ώστε το footer να μην κρύβεται πίσω από τη λωρίδα */
+        .inst img { width: 40px; height: 40px; border-radius: 9px; flex: none; }
+        .inst-txt { flex: 1; min-width: 0; font-size: .8rem; line-height: 1.35; color: var(--soft); }
+        .inst-txt b { display: block; color: var(--text); font-size: .88rem; }
+        .inst-share { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; }
+        .inst-btns { display: flex; flex-direction: column; gap: .35rem; flex: none; }
+        .inst button { border: 0; border-radius: 8px; padding: .45rem .7rem; font-size: .78rem; font-weight: 700; cursor: pointer; min-height: 32px; }
+        .inst .go { background: #e2e8f0; color: #0f172a; }
+        .inst .no { background: transparent; color: var(--muted); border: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -179,6 +201,12 @@
     </footer>
 </div>
 
+<div class="inst" id="inst" role="dialog" aria-live="polite">
+    <img src="/icons/icon-192.png" alt="">
+    <div class="inst-txt"><b data-t="instTitle"></b><span id="instMsg"></span></div>
+    <div class="inst-btns"><button class="go" id="instGo"></button><button class="no" id="instNo" data-t="instNo"></button></div>
+</div>
+
 <script>
 // Κείμενα GR / EN. Πρώτη επίσκεψη: αγγλικά. Μετά ακολουθεί την επιλογή του επισκέπτη,
 // κοινή με όλα τα dashboards του hub (κλειδί 'kp_lang', ίδιο origin).
@@ -200,6 +228,12 @@ const T = {
     flowsShort: 'Flows per border, prices, cash position',
     hydroShort: 'Reservoirs, rivers, pumped storage',
     last: 'Last visited',
+    instTitle: 'Install Greek Energy',
+    instAndroid: 'Full screen, no browser bar, one tap from your home screen.',
+    instIos: 'Tap {share} then “Add to Home Screen”.',
+    instGo: 'Install', instOk: 'OK', instNo: 'Not now',
+    gcOff: 'Visit counting is OFF for this browser (owner mode).',
+    gcOn: 'Visit counting is ON again for this browser.',
     lastUpd: 'last',
     stale: 'Delayed update',
     hourly: 'Updated hourly', daily: 'Updated daily', open: 'Open →',
@@ -225,6 +259,12 @@ const T = {
     flowsShort: 'Ροές ανά σύνορο, τιμές, ταμειακή θέση',
     hydroShort: 'Ταμιευτήρες, ποτάμια, άντληση',
     last: 'Τελευταία επίσκεψη',
+    instTitle: 'Εγκατάσταση του Greek Energy',
+    instAndroid: 'Πλήρης οθόνη, χωρίς μπάρα, με ένα πάτημα από την αρχική οθόνη.',
+    instIos: 'Πάτα {share} και μετά «Προσθήκη στην οθόνη Αφετηρίας».',
+    instGo: 'Εγκατάσταση', instOk: 'Εντάξει', instNo: 'Όχι τώρα',
+    gcOff: 'Η μέτρηση επισκέψεων είναι ΚΛΕΙΣΤΗ σε αυτόν τον browser (λειτουργία ιδιοκτήτη).',
+    gcOn: 'Η μέτρηση επισκέψεων είναι ξανά ΑΝΟΙΧΤΗ σε αυτόν τον browser.',
     lastUpd: 'τελευταία',
     stale: 'Καθυστέρηση ενημέρωσης',
     hourly: 'Ωριαία ενημέρωση', daily: 'Καθημερινή ενημέρωση', open: 'Άνοιγμα →',
@@ -278,6 +318,7 @@ function render() {
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = T[lang][el.dataset.t]; });
   document.querySelectorAll('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === lang));
   renderUpd();
+  renderInst();
 }
 document.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
   if (b.dataset.l === lang) return;
@@ -296,6 +337,103 @@ try {
 document.querySelectorAll('.card[data-k]').forEach(c => c.addEventListener('click', () => {
   try { localStorage.setItem('kp_last', c.dataset.k); } catch (e) { /* */ }
 }));
+
+// ---- Εγκατάσταση ως εφαρμογή (PWA) ----
+// Service worker χωρίς αντίγραφα (βλ. sw.js): χρειάζεται για να θεωρηθεί η σελίδα εγκαταστάσιμη.
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+
+// Η λωρίδα εμφανίζεται μόνο: στο κινητό, από τη 2η επίσκεψη (μία μέτρηση ανά συνεδρία),
+// όχι αν η εφαρμογή είναι ήδη εγκατεστημένη, και όχι για 30 ημέρες μετά το «Όχι τώρα».
+var instMode = null, deferred = null;   // var: η render() τρέχει πριν φτάσει εδώ
+const SHARE_SVG = '<svg class="inst-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/></svg>';
+const STANDALONE = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+// Επισκέψεις αυτής της συσκευής: μία μέτρηση ανά συνεδρία (για λωρίδα εγκατάστασης και «επιστροφή»)
+let NEW_SESSION = false, VISITS = 0;
+try {
+  if (!sessionStorage.getItem('kp_counted')) {
+    sessionStorage.setItem('kp_counted', '1'); NEW_SESSION = true;
+    localStorage.setItem('kp_visits', String((+localStorage.getItem('kp_visits') || 0) + 1));
+  }
+  VISITS = +localStorage.getItem('kp_visits') || 0;
+} catch (e) { /* */ }
+function instAllowed() {
+  if (STANDALONE || !matchMedia('(max-width: 640px)').matches) return false;
+  try {
+    if (VISITS < 2) return false;
+    const no = +localStorage.getItem('kp_inst_no') || 0;
+    if (Date.now() - no < 30 * 864e5) return false;
+  } catch (e) { return false; }
+  return true;
+}
+function renderInst() {
+  const box = document.getElementById('inst');
+  document.body.classList.toggle('inst-on', !!instMode);
+  if (!instMode) { box.classList.remove('show'); return; }
+  document.getElementById('instMsg').innerHTML = instMode === 'ios'
+    ? T[lang].instIos.replace('{share}', SHARE_SVG) : T[lang].instAndroid;
+  document.getElementById('instGo').textContent = instMode === 'ios' ? T[lang].instOk : T[lang].instGo;
+  document.getElementById('instGo').style.display = '';
+  box.classList.add('show');
+}
+const ok = instAllowed();
+// Android / Chrome: ο browser μάς δίνει το επίσημο παράθυρο εγκατάστασης
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferred = e;
+  if (ok) { instMode = 'android'; renderInst(); }
+});
+// iPhone / iPad (Safari): δεν υπάρχει αυτόματο παράθυρο, μόνο οδηγία
+const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (ok && ios) { instMode = 'ios'; renderInst(); }
+document.getElementById('instGo').addEventListener('click', async () => {
+  if (instMode === 'android' && deferred) { deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; }
+  try { localStorage.setItem('kp_inst_no', String(Date.now())); } catch (e) { /* */ }
+  instMode = null; renderInst();
+});
+document.getElementById('instNo').addEventListener('click', () => {
+  try { localStorage.setItem('kp_inst_no', String(Date.now())); } catch (e) { /* */ }
+  instMode = null; renderInst();
+});
+window.addEventListener('appinstalled', () => { instMode = null; renderInst(); });
+
+// ---- Μέτρηση επισκεψιμότητας: GoatCounter (χωρίς cookies) ----
+// Εξαίρεση του ιδιοκτήτη: το link .../#toggle-goatcounter ή παρατεταμένο πάτημα (2 δευτ.) στο όνομα του footer
+// ανάβει/σβήνει τη μέτρηση για αυτόν τον browser (κλειδί 'skipgc', το ίδιο που διαβάζει το GoatCounter).
+const GC = 'https://konpappas.goatcounter.com/count';
+function gcSkipped() { try { return localStorage.getItem('skipgc') === 't'; } catch (e) { return true; } }
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 4000);
+}
+function toggleGc() {
+  try {
+    if (gcSkipped()) localStorage.removeItem('skipgc'); else localStorage.setItem('skipgc', 't');
+  } catch (e) { /* */ }
+  toast(gcSkipped() ? T[lang].gcOff : T[lang].gcOn);
+}
+if (location.hash === '#toggle-goatcounter') {
+  history.replaceState(null, '', location.pathname + location.search);   // ώστε να μην το ξαναγυρίσει το count.js
+  toggleGc();
+}
+(() => {
+  const name = document.querySelector('.f-name'); let timer = null;
+  const start = () => { timer = setTimeout(toggleGc, 2000); };
+  const stop = () => clearTimeout(timer);
+  name.addEventListener('touchstart', start, { passive: true }); name.addEventListener('mousedown', start);
+  ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => name.addEventListener(ev, stop));
+  name.style.webkitUserSelect = name.style.userSelect = 'none';
+})();
+// Το count.js μετρά μόνο του την προβολή της σελίδας. Οι ενδείξεις στέλνονται μία φορά ανά συνεδρία:
+//   event-return  = η συσκευή έχει ξαναμπεί στο hub   ·   event-app-open = άνοιξε από την εγκατεστημένη εφαρμογή
+(() => {
+  const sc = document.createElement('script');
+  sc.async = true; sc.src = 'https://gc.zgo.at/count.js'; sc.dataset.goatcounter = GC;
+  sc.onload = () => {
+    if (!NEW_SESSION || gcSkipped() || !window.goatcounter || !window.goatcounter.count) return;
+    if (VISITS >= 2) window.goatcounter.count({ path: 'event-return', title: 'Returning visit', event: true });
+    if (STANDALONE) window.goatcounter.count({ path: 'event-app-open', title: 'Opened from installed app', event: true });
+  };
+  document.head.appendChild(sc);
+})();
 </script>
 </body>
 </html>
