@@ -41,9 +41,12 @@
         .card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: .75rem; text-shadow: 0 2px 4px rgba(0,0,0,.8); }
         .card-desc { color: var(--soft); font-size: .93rem; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
         .card-foot { margin-top: auto; padding-top: 1.1rem; display: flex; justify-content: space-between; align-items: center; gap: .75rem; font-size: .78rem; color: var(--muted); }
-        .cadence { display: inline-flex; align-items: center; gap: .45rem; }
+        .cadence { display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; }
         .cadence::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--a); }
         .open { color: var(--a); font-weight: 700; white-space: nowrap; }
+        .upd:not(:empty)::before { content: "\00b7"; margin-right: .45rem; color: var(--muted); }
+        /* Καθυστέρηση ενημέρωσης: διακριτικό κόκκινο (το κίτρινο είναι των εισαγωγών) */
+        .card.is-stale .upd { color: #fca5a5; }
 
         /* Κάρτα συνόλου (live-greekpower) σε όλο το πλάτος */
         .card.hero { grid-column: 1 / -1; min-height: 230px; }
@@ -87,6 +90,7 @@
             .card-title { font-size: 1.02rem; margin-bottom: .15rem; }
             .card-short { display: block; color: var(--soft); font-size: .8rem; line-height: 1.35; }
             .card::after { content: "\203A"; position: absolute; right: .9rem; top: 50%; transform: translateY(-50%); z-index: 3; font-size: 1.6rem; line-height: 1; color: var(--a); }
+            .card.is-stale .card-short::before { content: "\26A0  "; color: #fca5a5; }
             .card.hero { min-height: 0; }
             .card.hero .card-content { padding: 1rem 2.4rem 1rem .95rem; }
             .card.hero .card-title { font-size: 1.25rem; margin-bottom: .2rem; }
@@ -123,7 +127,7 @@
                 <div class="kicker"><span data-t="liveKick"></span><span class="last" data-t="last"></span></div>
                 <h2 class="card-title">Greek Power Live</h2>
                 <p class="card-desc" data-t="liveDesc"></p><p class="card-short" data-t="liveShort"></p>
-                <div class="card-foot"><span class="cadence" data-t="hourly"></span><span class="open" data-t="open"></span></div>
+                <div class="card-foot"><span class="cadence"><span data-t="hourly"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
         </a>
 
@@ -134,7 +138,7 @@
             <div class="card-content">
                 <h2 class="card-title"><span data-t="bessT"></span><span class="last" data-t="last"></span></h2>
                 <p class="card-desc" data-t="bessDesc"></p><p class="card-short" data-t="bessShort"></p>
-                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+                <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
         </a>
 
@@ -143,7 +147,7 @@
             <div class="card-content">
                 <h2 class="card-title"><span data-t="gasT"></span><span class="last" data-t="last"></span></h2>
                 <p class="card-desc" data-t="gasDesc"></p><p class="card-short" data-t="gasShort"></p>
-                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+                <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
         </a>
 
@@ -152,7 +156,7 @@
             <div class="card-content">
                 <h2 class="card-title"><span data-t="flowsT"></span><span class="last" data-t="last"></span></h2>
                 <p class="card-desc" data-t="flowsDesc"></p><p class="card-short" data-t="flowsShort"></p>
-                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+                <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
         </a>
 
@@ -161,7 +165,7 @@
             <div class="card-content">
                 <h2 class="card-title"><span data-t="hydroT"></span><span class="last" data-t="last"></span></h2>
                 <p class="card-desc" data-t="hydroDesc"></p><p class="card-short" data-t="hydroShort"></p>
-                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+                <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
         </a>
     </main>
@@ -196,6 +200,8 @@ const T = {
     flowsShort: 'Flows per border, prices, cash position',
     hydroShort: 'Reservoirs, rivers, pumped storage',
     last: 'Last visited',
+    lastUpd: 'last',
+    stale: 'Delayed update',
     hourly: 'Updated hourly', daily: 'Updated daily', open: 'Open →',
     note: 'An independent, continuously evolving project, built and maintained by a single analyst. Not affiliated with ADMIE/IPTO, ENTSO-E or HEnEx.',
     name: 'Konstantinos Pappas | Energy Market Analyst',
@@ -219,6 +225,8 @@ const T = {
     flowsShort: 'Ροές ανά σύνορο, τιμές, ταμειακή θέση',
     hydroShort: 'Ταμιευτήρες, ποτάμια, άντληση',
     last: 'Τελευταία επίσκεψη',
+    lastUpd: 'τελευταία',
+    stale: 'Καθυστέρηση ενημέρωσης',
     hourly: 'Ωριαία ενημέρωση', daily: 'Καθημερινή ενημέρωση', open: 'Άνοιγμα →',
     note: 'Ανεξάρτητο έργο που εξελίσσεται συνεχώς, από έναν αναλυτή. Χωρίς σχέση με ΑΔΜΗΕ, ENTSO-E ή HEnEx.',
     name: 'Konstantinos Pappas | Αναλυτής Αγοράς Ενέργειας',
@@ -228,10 +236,48 @@ const T = {
 };
 let lang = 'en';
 try { const l = localStorage.getItem('kp_lang'); if (l === 'el' || l === 'en') lang = l; } catch (e) { /* ιδιωτική περιήγηση */ }
+// Τελευταία ενημέρωση κάθε dashboard, από το δικό του αρχείο (ίδιο origin):
+// data/meta.json → fetched (UTC) στα τέσσερα, data/manifest.json → generated στο Live.
+// Τρίτο στοιχείο: μετά από πόσες ώρες χωρίς ενημέρωση η ένδειξη γίνεται «καθυστέρηση».
+const SRC = {
+  live:  ['./live-greekpower/data/manifest.json', d => d.generated, 2],
+  bess:  ['./bess-dashboard-v2/data/meta.json', d => d.fetched, 36],
+  gas:   ['./gas-power-dashboard-v2/data/meta.json', d => d.fetched, 36],
+  flows: ['./power-flows-dashboard/data/meta.json', d => d.fetched, 36],
+  hydro: ['./bighydro-dashboard/data/meta.json', d => d.fetched, 36]
+};
+const UPD = {};   // κλειδί → Date
+function fmtUpd(dt) {
+  // ώρα Ελλάδας, π.χ. «14 Νοε, 07:05» / «14 Nov, 07:05»
+  const loc = lang === 'el' ? 'el-GR' : 'en-GB';
+  const o = { timeZone: 'Europe/Athens' };
+  const day = new Intl.DateTimeFormat(loc, { ...o, day: 'numeric', month: 'short' }).format(dt).replace('.', '');
+  const time = new Intl.DateTimeFormat(loc, { ...o, hour: '2-digit', minute: '2-digit', hour12: false }).format(dt);
+  return T[lang].lastUpd + ' ' + day + ', ' + time;
+}
+function renderUpd() {
+  Object.keys(UPD).forEach(k => {
+    const card = document.querySelector('.card[data-k="' + k + '"]');
+    if (!card) return;
+    const stale = (Date.now() - UPD[k]) / 3600000 > SRC[k][2];
+    card.classList.toggle('is-stale', stale);
+    const el = card.querySelector('.upd');
+    el.textContent = (stale ? '\u26A0 ' : '') + fmtUpd(UPD[k]);
+    el.title = stale ? T[lang].stale : '';
+  });
+}
+Object.entries(SRC).forEach(([k, [url, pick]]) => {
+  fetch(url, { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => { const dt = new Date(pick(d)); if (!isNaN(dt)) { UPD[k] = dt; renderUpd(); } })
+    .catch(() => { /* χωρίς ένδειξη: μένει μόνο η συχνότητα */ });
+});
+
 function render() {
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = T[lang][el.dataset.t]; });
   document.querySelectorAll('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === lang));
+  renderUpd();
 }
 document.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
   if (b.dataset.l === lang) return;
