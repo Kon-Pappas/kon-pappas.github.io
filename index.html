@@ -1,347 +1,197 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greek Energy Market Analytics Hub</title>
+    <title>Greek Energy Market Hub · Konstantinos Pappas</title>
+    <meta name="description" content="Independent analytics of the Greek electricity and gas markets from public ADMIE/IPTO, ENTSO-E and HEnEx data: system balance, BESS, gas-to-power, cross-border flows and hydro.">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --card-hover: #1e293b; 
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --border-color: #334155;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --soft: #cbd5e1;
+            --border: #334155;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; padding: 1.5rem 1.25rem 2rem; }
+        .wrap { max-width: 1000px; width: 100%; margin: 0 auto; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+        /* Κεφαλίδα + διακόπτης γλώσσας */
+        .top { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
+        .lang { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .lang button { background: transparent; color: var(--muted); border: 0; padding: .4rem .85rem; font-size: .8rem; font-weight: 700; letter-spacing: .05em; cursor: pointer; }
+        .lang button + button { border-left: 1px solid var(--border); }
+        .lang button.on { background: #e2e8f0; color: #0f172a; }
+        header { text-align: center; margin-bottom: 2.25rem; }
+        header h1 { font-size: 2.1rem; font-weight: 700; letter-spacing: -.025em; margin-bottom: .5rem; }
+        header p { color: var(--muted); font-size: 1.05rem; max-width: 640px; margin: 0 auto; line-height: 1.5; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 2rem;
-        }
+        /* Πλέγμα καρτών */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+        .section-label { grid-column: 1 / -1; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin: .75rem 0 -.25rem; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } header h1 { font-size: 1.7rem; } }
 
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            position: relative;
-            z-index: 10;
-        }
+        .card { --a: #94a3b8; position: relative; display: flex; flex-direction: column; min-height: 210px; border: 1px solid var(--border); border-top: 3px solid var(--a); border-radius: 12px; background: var(--card); color: inherit; text-decoration: none; overflow: hidden; transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease; }
+        .card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(100%) contrast(1.15) brightness(.55); opacity: .55; transition: opacity .5s ease, transform .5s ease; }
+        .card-content { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; padding: 1.6rem 1.75rem; background: linear-gradient(180deg, rgba(30,41,59,.25) 0%, rgba(30,41,59,.92) 100%); }
+        .card:hover { transform: translateY(-4px); border-color: var(--a); box-shadow: 0 10px 25px -8px rgba(0,0,0,.6); }
+        .card:hover .card-bg { opacity: .85; transform: scale(1.04); }
+        .card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: .75rem; text-shadow: 0 2px 4px rgba(0,0,0,.8); }
+        .card-desc { color: var(--soft); font-size: .93rem; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+        .card-foot { margin-top: auto; padding-top: 1.1rem; display: flex; justify-content: space-between; align-items: center; gap: .75rem; font-size: .78rem; color: var(--muted); }
+        .cadence { display: inline-flex; align-items: center; gap: .45rem; }
+        .cadence::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--a); }
+        .open { color: var(--a); font-weight: 700; white-space: nowrap; }
 
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.025em;
-        }
+        /* Κάρτα συνόλου (live-greekpower) σε όλο το πλάτος */
+        .card.hero { grid-column: 1 / -1; min-height: 230px; }
+        .card-bg.pattern, .card.hero .card-bg { background-image:
+            linear-gradient(rgba(148,163,184,.10) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(148,163,184,.10) 1px, transparent 1px);
+            background-size: 32px 32px; filter: none; opacity: 1; }
+        .card.hero .card-content { background: linear-gradient(120deg, rgba(30,41,59,.55) 0%, rgba(15,23,42,.95) 100%); }
+        .card.hero .card-title { font-size: 1.6rem; }
+        .card.hero .card-desc { max-width: 720px; }
+        .kicker { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a); margin-bottom: .5rem; }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
+        .c-live  { --a: #cbd5e1; }  /* πλατίνα */
+        .c-bess  { --a: #34d399; }  /* emerald */
+        .c-gas   { --a: #60a5fa; }  /* μπλε */
+        .c-flows { --a: #22d3ee; }  /* cyan */
+        .c-hydro { --a: #a78bfa; }  /* μωβ */
 
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Βασικό στυλ Κάρτας */
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            position: relative;
-            overflow: hidden;
-            min-height: 220px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Container για το κείμενο */
-        .card-content {
-            padding: 2rem;
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(180deg, rgba(30, 41, 59, 0.3) 0%, rgba(30, 41, 59, 0.9) 100%);
-        }
-
-        /* Εικόνα Background */
-        .card-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            z-index: 1;
-            filter: grayscale(100%) sepia(30%) hue-rotate(180deg) contrast(1.2) brightness(0.6);
-            opacity: 0.6;
-            transition: all 0.5s ease;
-        }
-
-        /* Hover Effect στις ενεργές κάρτες */
-        .card.active:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-green);
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15);
-        }
-
-        .card.active:hover .card-bg {
-            opacity: 0.95;
-            transform: scale(1.05); 
-            filter: grayscale(80%) sepia(20%) hue-rotate(180deg) contrast(1.1) brightness(0.7);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            font-size: 1.35rem;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        /* Στυλ Badges */
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.3rem 0.8rem;
-            border-radius: 9999px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            backdrop-filter: blur(4px);
-        }
-
-        .badge.live {
-            background-color: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-
-        .badge.beta {
-            background-color: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-        }
-
-        .card-desc {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-        }
-
-        /* --- Live Pill Button & Pulse Effect --- */
-        .live-bar {
-            max-width: 1000px;
-            width: 100%;
-            margin: 1.5rem auto 0;
-            display: flex;
-            justify-content: flex-end; /* Στοίχιση δεξιά */
-            position: relative;
-            z-index: 10;
-        }
-
-        .live-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            background-color: rgba(30, 41, 59, 0.7);
-            border: 1px solid var(--border-color);
-            padding: 0.6rem 1.2rem;
-            border-radius: 9999px;
-            color: #cbd5e1;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .live-pill:hover {
-            background-color: rgba(30, 41, 59, 0.95);
-            border-color: rgba(239, 68, 68, 0.5);
-            color: var(--text-main);
-            transform: translateY(-2px);
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #ef4444;
-            border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            animation: pulse-red 2s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
-            }
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-        /* -------------------------------------- */
-
-        footer {
-            text-align: center;
-            margin-top: 4rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            position: relative;
-            z-index: 10;
-        }
-
-        .footer-disclaimer {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            font-style: italic;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.5;
-        }
-
-        .footer-profile {
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 0.3rem;
-            font-size: 0.95rem;
-        }
-
-        .footer-sub {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-        }
-
-        .footer-copy {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-        }
+        footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; }
+        .f-note { color: var(--muted); font-size: .85rem; line-height: 1.55; max-width: 700px; margin: 0 auto 1rem; }
+        .f-name { font-weight: 600; font-size: .95rem; margin-bottom: .3rem; }
+        .f-sub { color: var(--muted); font-size: .85rem; margin-bottom: .9rem; }
+        .f-links a { color: var(--soft); font-size: .85rem; text-decoration: none; border-bottom: 1px solid var(--border); }
+        .f-copy { color: var(--muted); font-size: .75rem; margin-top: .9rem; }
     </style>
 </head>
 <body>
+<div class="wrap">
+    <div class="top">
+        <div class="lang" id="lang"><button data-l="el">GR</button><button data-l="en">EN</button></div>
+    </div>
 
     <header>
-        <h1>Greek Energy Market Hub</h1>
-        <p>System telemetry, market clearing mechanisms & asset analytics</p>
+        <h1 data-t="h1"></h1>
+        <p data-t="sub"></p>
     </header>
 
-    <main>
-        <div class="container">
-            <!-- Κάρτα 1: BESS Dashboard -->
-            <a href="./bess-dashboard-v2/" class="card active">
-                <div class="card-bg" style="background-image: url('images/bess-bg.jpg');"></div>
-                <div class="card-content">
-                    <div class="card-header">
-                        <h2 class="card-title">BESS Dashboard</h2>
-                        <span class="badge live">Live</span>
-                    </div>
-                    <p class="card-desc">Battery Energy Storage Systems tracking, telemetry visualization, and grid dispatch modeling.</p>
-                </div>
-            </a>
+    <main class="grid">
+        <a href="./live-greekpower/" class="card hero c-live">
+            <div class="card-bg"></div>
+            <div class="card-content">
+                <div class="kicker" data-t="liveKick"></div>
+                <h2 class="card-title">Greek Power Live</h2>
+                <p class="card-desc" data-t="liveDesc"></p>
+                <div class="card-foot"><span class="cadence" data-t="hourly"></span><span class="open" data-t="open"></span></div>
+            </div>
+        </a>
 
-            <!-- Κάρτα 2: Gas-to-Power -->
-            <a href="./gas-power-dashboard-v2/" class="card active">
-                <div class="card-bg" style="background-image: url('images/gas-bg.jpg');"></div>
-                <div class="card-content">
-                    <div class="card-header">
-                        <h2 class="card-title">Gas-to-Power Analytics</h2>
-                        <span class="badge live">Live</span>
-                    </div>
-                    <p class="card-desc">Thermal generation efficiency, factory dispatch metrics, and dynamic gas cost computations.</p>
-                </div>
-            </a>
+        <div class="section-label" data-t="deep"></div>
 
-            <!-- Κάρτα 3: Flows -->
-            <a href="./power-flows-dashboard/" class="card active">
-                <div class="card-bg" style="background-image: url('images/flows-bg.jpg');"></div>
-                <div class="card-content">
-                    <div class="card-header">
-                        <h2 class="card-title">Flows (Imports - Exports)</h2>
-                        <span class="badge live">Live</span>
-                    </div>
-                    <p class="card-desc">Cross-border interconnections (Italy, Bulgaria, FYROM, Albania, Turkey), NTC, and exchange analytics.</p>
-                </div>
-            </a>
+        <a href="./bess-dashboard-v2/" class="card c-bess">
+            <div class="card-bg" style="background-image:url('images/bess-bg.jpg')"></div>
+            <div class="card-content">
+                <h2 class="card-title" data-t="bessT"></h2>
+                <p class="card-desc" data-t="bessDesc"></p>
+                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+            </div>
+        </a>
 
-            <!-- Κάρτα 4: Water & Hydro (Τώρα Ενεργή ως BETA) -->
-            <a href="./bighydro-dashboard/" class="card active">
-                <div class="card-bg" style="background-image: url('images/hydro-bg.jpg');"></div>
-                <div class="card-content">
-                    <div class="card-header">
-                        <h2 class="card-title">BigHydro, Pump, WaterReserve</h2>
-                        <span class="badge beta">Beta</span>
-                    </div>
-                    <p class="card-desc">Reservoir level monitoring, pumped storage scheduling, and hydro generation optimization.</p>
-                </div>
-            </a>
-        </div>
+        <a href="./gas-power-dashboard-v2/" class="card c-gas">
+            <div class="card-bg" style="background-image:url('images/gas-bg.jpg')"></div>
+            <div class="card-content">
+                <h2 class="card-title" data-t="gasT"></h2>
+                <p class="card-desc" data-t="gasDesc"></p>
+                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+            </div>
+        </a>
 
-        <!-- Νέα προσθήκη: Live Pill Bar -->
-        <div class="live-bar">
-            <a href="./live-greekpower/" class="live-pill">
-                <span class="pulse-dot"></span>
-                Live ADMIE Telemetry & Market Insights
-            </a>
-        </div>
+        <a href="./power-flows-dashboard/" class="card c-flows">
+            <!-- Προσωρινά χωρίς φωτογραφία: η images/flows-bg.jpg γράφει «Fyrom». Μπαίνει η νέα εικόνα με τα interconnections. -->
+            <div class="card-bg pattern"></div>
+            <div class="card-content">
+                <h2 class="card-title" data-t="flowsT"></h2>
+                <p class="card-desc" data-t="flowsDesc"></p>
+                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+            </div>
+        </a>
+
+        <a href="./bighydro-dashboard/" class="card c-hydro">
+            <div class="card-bg" style="background-image:url('images/hydro-bg.jpg')"></div>
+            <div class="card-content">
+                <h2 class="card-title" data-t="hydroT"></h2>
+                <p class="card-desc" data-t="hydroDesc"></p>
+                <div class="card-foot"><span class="cadence" data-t="daily"></span><span class="open" data-t="open"></span></div>
+            </div>
+        </a>
     </main>
 
     <footer>
-        <div class="footer-disclaimer">
-            An independent, continuously evolving analytical tool for the Greek energy market, built and maintained by a single analyst.
-        </div>
-        <div class="footer-profile">Konstantinos Pappas | Energy Market Analyst</div>
-        <div class="footer-sub">Business Operations & Risk Management | Data Insights on Energy Transition & Grid Stability</div>
-        <div class="footer-copy">&copy; 2026 Energy Market Analytics. Hosted on GitHub Pages.</div>
+        <p class="f-note" data-t="note"></p>
+        <div class="f-name" data-t="name"></div>
+        <div class="f-sub" data-t="role"></div>
+        <div class="f-links"><a href="https://www.linkedin.com/in/konstantinosp/" target="_blank" rel="noopener">LinkedIn</a> &nbsp;·&nbsp; <a href="https://github.com/Kon-Pappas" target="_blank" rel="noopener">GitHub</a></div>
+        <div class="f-copy" data-t="copy"></div>
     </footer>
+</div>
 
+<script>
+// Κείμενα GR / EN. Πρώτη επίσκεψη: αγγλικά. Μετά ακολουθεί την επιλογή του επισκέπτη,
+// κοινή με όλα τα dashboards του hub (κλειδί 'kp_lang', ίδιο origin).
+const T = {
+  en: {
+    h1: 'Greek Energy Market Hub',
+    sub: 'Independent analytics of the Greek electricity and gas markets, built from public ADMIE/IPTO, ENTSO-E and HEnEx data.',
+    liveKick: 'The whole system',
+    liveDesc: 'Where each hour’s energy came from and where it went: generation mix, demand, cross-border flows, BESS and pumping, and the day-ahead price. Plus a daily cross-check of clean generation against metered data, and all-time records.',
+    deep: 'Deep dives',
+    bessT: 'BESS', bessDesc: 'Battery storage: scheduled (ISP) against actual (SCADA) operation per unit, round-trip efficiency, monthly impact on the RES surplus, day-ahead arbitrage and fleet capacity.',
+    gasT: 'Gas-to-Power', gasDesc: 'Gas-fired plants: scheduled against actual generation, efficiency class, SRMC and cost from the HGSIDA gas price and CO₂, and generation driven by grid constraints.',
+    flowsT: 'Power Flows', flowsDesc: 'Interconnections with Albania, Bulgaria, Italy, North Macedonia and Turkey: scheduled against actual flows, hourly profiles with prices, daily and month-to-date cash position.',
+    hydroT: 'Hydro & Reservoirs', hydroDesc: 'Reservoir levels, generation by river and cascade, pumped storage, a stored-energy estimate calibrated to ENTSO-E, and the water balance of each river.',
+    hourly: 'Updated hourly', daily: 'Updated daily', open: 'Open →',
+    note: 'An independent, continuously evolving project, built and maintained by a single analyst. Not affiliated with ADMIE/IPTO, ENTSO-E or HEnEx.',
+    name: 'Konstantinos Pappas | Energy Market Analyst',
+    role: 'Business Operations & Risk Management | Data Insights on Energy Transition & Grid Stability',
+    copy: '© 2026 Konstantinos Pappas · Hosted on GitHub Pages'
+  },
+  el: {
+    h1: 'Greek Energy Market Hub',
+    sub: 'Ανεξάρτητη ανάλυση των ελληνικών αγορών ηλεκτρισμού και φυσικού αερίου, από δημόσια δεδομένα ΑΔΜΗΕ, ENTSO-E και HEnEx.',
+    liveKick: 'Το σύστημα συνολικά',
+    liveDesc: 'Από πού ήρθε η ενέργεια κάθε ώρας και πού πήγε: μείγμα παραγωγής, ζήτηση, διασυνοριακές ροές, μπαταρίες και άντληση, τιμή επόμενης ημέρας. Επιπλέον, καθημερινή διασταύρωση της καθαρής παραγωγής με τις μετρήσεις, και ρεκόρ.',
+    deep: 'Σε βάθος',
+    bessT: 'BESS', bessDesc: 'Αποθήκευση με μπαταρίες: προγραμματισμός (ISP) έναντι πραγματικής λειτουργίας (SCADA) ανά μονάδα, απόδοση κύκλου, μηνιαία επίδραση στο πλεόνασμα ΑΠΕ, arbitrage επόμενης ημέρας και ισχύς στόλου.',
+    gasT: 'Gas-to-Power', gasDesc: 'Μονάδες φυσικού αερίου: προγραμματισμένη έναντι πραγματικής παραγωγής, κλάση απόδοσης, SRMC και κόστος από την τιμή HGSIDA και το CO₂, και παραγωγή λόγω περιορισμών δικτύου.',
+    flowsT: 'Διασυνοριακές ροές', flowsDesc: 'Διασυνδέσεις με Αλβανία, Βουλγαρία, Ιταλία, Βόρεια Μακεδονία και Τουρκία: προγραμματισμένες έναντι πραγματικών ροών, ωριαία προφίλ με τιμές, ημερήσια και μηνιαία ταμειακή θέση.',
+    hydroT: 'Υδροηλεκτρικά & ταμιευτήρες', hydroDesc: 'Στάθμες ταμιευτήρων, παραγωγή ανά ποταμό και καταρράκτη, άντληση, αποθηκευμένη ενέργεια βαθμονομημένη στο ENTSO-E, και ισοζύγιο νερού ανά ποταμό.',
+    hourly: 'Ωριαία ενημέρωση', daily: 'Καθημερινή ενημέρωση', open: 'Άνοιγμα →',
+    note: 'Ανεξάρτητο έργο που εξελίσσεται συνεχώς, από έναν αναλυτή. Χωρίς σχέση με ΑΔΜΗΕ, ENTSO-E ή HEnEx.',
+    name: 'Konstantinos Pappas | Αναλυτής Αγοράς Ενέργειας',
+    role: 'Business Operations & Risk Management | Data Insights on Energy Transition & Grid Stability',
+    copy: '© 2026 Konstantinos Pappas · Φιλοξενία στο GitHub Pages'
+  }
+};
+let lang = 'en';
+try { const l = localStorage.getItem('kp_lang'); if (l === 'el' || l === 'en') lang = l; } catch (e) { /* ιδιωτική περιήγηση */ }
+function render() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = T[lang][el.dataset.t]; });
+  document.querySelectorAll('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === lang));
+}
+document.querySelectorAll('#lang button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.l === lang) return;
+  lang = b.dataset.l;
+  try { localStorage.setItem('kp_lang', lang); } catch (e) { /* */ }
+  render();
+}));
+render();
+</script>
 </body>
 </html>
