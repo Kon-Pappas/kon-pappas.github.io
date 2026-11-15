@@ -54,7 +54,7 @@
         .open { color: var(--a); font-weight: 700; white-space: nowrap; }
         .upd:not(:empty)::before { content: "\00b7"; margin-right: .45rem; color: var(--muted); }
         /* Καθυστέρηση ενημέρωσης: διακριτικό κόκκινο (το κίτρινο είναι των εισαγωγών) */
-        .card.is-stale .upd { color: #fca5a5; }
+        .card.is-stale .upd, .card.is-stale .mtime { color: #fca5a5; }
 
         /* Κάρτα συνόλου (live-greekpower) σε όλο το πλάτος */
         .card.hero { grid-column: 1 / -1; min-height: 230px; }
@@ -78,7 +78,7 @@
         .f-links a { color: var(--soft); font-size: .85rem; text-decoration: none; border-bottom: 1px solid var(--border); }
         .f-copy { color: var(--muted); font-size: .75rem; margin-top: .9rem; }
 
-        .card-short, .sub-short, .chev { display: none; }
+        .card-short, .sub-short, .chev, .mtime { display: none; }
         .last { display: none; margin-left: .6rem; vertical-align: middle; font-size: .62rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--a); border: 1px solid var(--a); border-radius: 9999px; padding: .1rem .5rem; text-shadow: none; }
         .card.is-last .last { display: inline-block; }
 
@@ -87,30 +87,31 @@
             body { padding: .9rem .75rem 1.25rem; }
             .top { position: absolute; top: .85rem; right: .75rem; margin: 0; }
             .lang button { padding: .3rem .6rem; font-size: .72rem; }
-            header { text-align: left; margin: .1rem 0 .85rem; padding-right: 6.2rem; }
+            header { text-align: left; margin: .1rem 0 .6rem; padding-right: 6.2rem; }
             header h1 { font-size: 1.3rem; line-height: 1.2; margin-bottom: .2rem; }
-            .sub-long, .card-desc, .card-foot, .section-label { display: none; }
-            .sub-short { display: block; font-size: .8rem; margin: 0; }
+            .sub-long, .card-desc, .card-foot { display: none; }
+            .section-label { font-size: .66rem; margin: .45rem 0 -.1rem .15rem; }
             .grid { gap: .55rem; }
             .card { min-height: 0; border-radius: 10px; }
             .card:hover { transform: none; }
             .card-content { padding: .8rem 2.4rem .8rem .95rem; justify-content: center; background: linear-gradient(90deg, rgba(15,23,42,.94) 0%, rgba(15,23,42,.80) 70%, rgba(15,23,42,.55) 100%); }
-            .card-title { font-size: 1.02rem; margin-bottom: .15rem; }
+            .card-title { font-size: 1.02rem; margin-bottom: .15rem; display: flex; align-items: baseline; gap: .5rem; }
+            .mtime { display: inline; margin-left: auto; font-size: .68rem; font-weight: 500; color: var(--muted); white-space: nowrap; text-shadow: none; }
             .card-short { display: block; color: var(--soft); font-size: .8rem; line-height: 1.35; }
             .card::after { content: "\203A"; position: absolute; right: .9rem; top: 50%; transform: translateY(-50%); z-index: 3; font-size: 1.6rem; line-height: 1; color: var(--a); }
-            .card.is-stale .card-short::before { content: "\26A0  "; color: #fca5a5; }
             .card.hero { min-height: 0; }
             .card.hero .card-content { padding: 1rem 2.4rem 1rem .95rem; }
             .card.hero .card-title { font-size: 1.25rem; margin-bottom: .2rem; }
             .kicker { font-size: .62rem; margin-bottom: .3rem; }
             footer { margin-top: 1.75rem; padding-top: 1rem; }
-            .f-note, .f-sub { display: none; }
+            .f-sub { display: none; }
+            .f-note { font-size: .78rem; margin-bottom: .75rem; }
             .f-name { font-size: .85rem; }
             .f-copy { margin-top: .6rem; }
         }
         /* Πολύ στενές οθόνες (≤ 360 px): μία γραμμή ανά κάρτα */
         @media (max-width: 360px) {
-            .card-short { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .76rem; }
+            .card-short { font-size: .76rem; }
             .card-content { padding-top: .7rem; padding-bottom: .7rem; }
             .card-title { font-size: .98rem; }
             .card.hero .card-title { font-size: 1.15rem; }
@@ -147,7 +148,7 @@
             <div class="card-bg"></div>
             <div class="card-content">
                 <div class="kicker"><span data-t="liveKick"></span><span class="last" data-t="last"></span></div>
-                <h2 class="card-title">Greek Power Live</h2>
+                <h2 class="card-title"><span>Greek Power Live</span><span class="mtime"></span></h2>
                 <p class="card-desc" data-t="liveDesc"></p><p class="card-short" data-t="liveShort"></p>
                 <div class="card-foot"><span class="cadence"><span data-t="hourly"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
@@ -158,7 +159,7 @@
         <a href="./bess-dashboard-v2/" data-k="bess" class="card c-bess">
             <div class="card-bg" style="background-image:url('images/bess-bg.jpg')"></div>
             <div class="card-content">
-                <h2 class="card-title"><span data-t="bessT"></span><span class="last" data-t="last"></span></h2>
+                <h2 class="card-title"><span data-t="bessT"></span><span class="last" data-t="last"></span><span class="mtime"></span></h2>
                 <p class="card-desc" data-t="bessDesc"></p><p class="card-short" data-t="bessShort"></p>
                 <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
@@ -167,7 +168,7 @@
         <a href="./gas-power-dashboard-v2/" data-k="gas" class="card c-gas">
             <div class="card-bg" style="background-image:url('images/gas-bg.jpg')"></div>
             <div class="card-content">
-                <h2 class="card-title"><span data-t="gasT"></span><span class="last" data-t="last"></span></h2>
+                <h2 class="card-title"><span data-t="gasT"></span><span class="last" data-t="last"></span><span class="mtime"></span></h2>
                 <p class="card-desc" data-t="gasDesc"></p><p class="card-short" data-t="gasShort"></p>
                 <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
@@ -176,7 +177,7 @@
         <a href="./power-flows-dashboard/" data-k="flows" class="card c-flows">
             <div class="card-bg" style="background-image:url('images/flows-bg.jpg')"></div>
             <div class="card-content">
-                <h2 class="card-title"><span data-t="flowsT"></span><span class="last" data-t="last"></span></h2>
+                <h2 class="card-title"><span data-t="flowsT"></span><span class="last" data-t="last"></span><span class="mtime"></span></h2>
                 <p class="card-desc" data-t="flowsDesc"></p><p class="card-short" data-t="flowsShort"></p>
                 <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
@@ -185,7 +186,7 @@
         <a href="./bighydro-dashboard/" data-k="hydro" class="card c-hydro">
             <div class="card-bg" style="background-image:url('images/hydro-bg.jpg')"></div>
             <div class="card-content">
-                <h2 class="card-title"><span data-t="hydroT"></span><span class="last" data-t="last"></span></h2>
+                <h2 class="card-title"><span data-t="hydroT"></span><span class="last" data-t="last"></span><span class="mtime"></span></h2>
                 <p class="card-desc" data-t="hydroDesc"></p><p class="card-short" data-t="hydroShort"></p>
                 <div class="card-foot"><span class="cadence"><span data-t="daily"></span><span class="upd"></span></span><span class="open" data-t="open"></span></div>
             </div>
@@ -208,6 +209,7 @@
 </div>
 
 <script>
+// Στο κινητό, ο υπότιτλος κάθε κάρτας (…Short) = οι καρτέλες του dashboard, όπως στα repos (Νοε 2026).
 // Κείμενα GR / EN. Πρώτη επίσκεψη: αγγλικά. Μετά ακολουθεί την επιλογή του επισκέπτη,
 // κοινή με όλα τα dashboards του hub (κλειδί 'kp_lang', ίδιο origin).
 const T = {
@@ -222,11 +224,11 @@ const T = {
     flowsT: 'Power Flows', flowsDesc: 'Interconnections with Albania, Bulgaria, Italy, North Macedonia and Turkey: scheduled against actual flows, hourly profiles with prices, daily and month-to-date cash position.',
     hydroT: 'Hydro & Reservoirs', hydroDesc: 'Reservoir levels, generation by river and cascade, pumped storage, a stored-energy estimate calibrated to ENTSO-E, and the water balance of each river.',
     subShort: 'Greek electricity & gas, from public data',
-    liveShort: 'The whole system, hour by hour',
-    bessShort: 'Batteries: ISP vs SCADA, arbitrage',
-    gasShort: 'Gas plants: output, SRMC, cost',
-    flowsShort: 'Flows per border, prices, cash position',
-    hydroShort: 'Reservoirs, rivers, pumped storage',
+    liveShort: 'Hourly\u00a0· Daily\u00a0· Clean\u00a0energy\u00a0· Analysis\u00a0· Records',
+    bessShort: 'Daily\u00a0· Impact\u00a0· Surplus\u00a0· Arbitrage\u00a0· Capacity\u00a0· Monitoring',
+    gasShort: 'Overview\u00a0· Economics\u00a0· Monthly\u00a0analytics\u00a0· Constraints\u00a0· Review',
+    flowsShort: 'Daily\u00a0· Hourly\u00a0· Arbitrage\u00a0· MTD\u00a0· By\u00a0country\u00a0· Interconnector\u00a0day',
+    hydroShort: 'Rivers\u00a0· Stored\u00a0energy\u00a0· Pumping\u00a0· Water\u00a0balance\u00a0· Kastraki',
     last: 'Last visited',
     instTitle: 'Install Greek Energy',
     instAndroid: 'Full screen, no browser bar, one tap from your home screen.',
@@ -253,11 +255,11 @@ const T = {
     flowsT: 'Διασυνοριακές ροές', flowsDesc: 'Διασυνδέσεις με Αλβανία, Βουλγαρία, Ιταλία, Βόρεια Μακεδονία και Τουρκία: προγραμματισμένες έναντι πραγματικών ροών, ωριαία προφίλ με τιμές, ημερήσια και μηνιαία ταμειακή θέση.',
     hydroT: 'Υδροηλεκτρικά & ταμιευτήρες', hydroDesc: 'Στάθμες ταμιευτήρων, παραγωγή ανά ποταμό και καταρράκτη, άντληση, αποθηκευμένη ενέργεια βαθμονομημένη στο ENTSO-E, και ισοζύγιο νερού ανά ποταμό.',
     subShort: 'Ηλεκτρισμός & αέριο στην Ελλάδα, από δημόσια δεδομένα',
-    liveShort: 'Όλο το σύστημα, ώρα με την ώρα',
-    bessShort: 'Μπαταρίες: ISP έναντι SCADA, arbitrage',
-    gasShort: 'Μονάδες αερίου, SRMC, κόστος',
-    flowsShort: 'Ροές ανά σύνορο, τιμές, ταμειακή θέση',
-    hydroShort: 'Ταμιευτήρες, ποτάμια, άντληση',
+    liveShort: 'Ωριαία\u00a0· Ημερήσια\u00a0· Καθαρή\u00a0ενέργεια\u00a0· Ανάλυση\u00a0· Ρεκόρ',
+    bessShort: 'Ημερήσια\u00a0· Αντίκτυπος\u00a0· Πλεόνασμα\u00a0· Arbitrage\u00a0· Χωρητικότητα\u00a0· Παρακολούθηση',
+    gasShort: 'Επισκόπηση\u00a0· Οικονομικά\u00a0· Μηνιαία\u00a0ανάλυση\u00a0· Περιορισμοί\u00a0· Ανασκόπηση',
+    flowsShort: 'Ημερήσια\u00a0· Ωριαία\u00a0· Arbitrage\u00a0· Μηνιαία\u00a0· Ανά\u00a0χώρα\u00a0· Ημέρα\u00a0διασυνδέσεων',
+    hydroShort: 'Ποτάμια\u00a0· Αποθηκευμένη\u00a0ενέργεια\u00a0· Άντληση\u00a0· Ισοζύγιο\u00a0νερού\u00a0· Καστράκι',
     last: 'Τελευταία επίσκεψη',
     instTitle: 'Εγκατάσταση του Greek Energy',
     instAndroid: 'Πλήρης οθόνη, χωρίς μπάρα, με ένα πάτημα από την αρχική οθόνη.',
@@ -295,12 +297,22 @@ function fmtUpd(dt) {
   const time = new Intl.DateTimeFormat(loc, { ...o, hour: '2-digit', minute: '2-digit', hour12: false }).format(dt);
   return T[lang].lastUpd + ' ' + day + ', ' + time;
 }
+// Κινητό: σκέτη ώρα αν η ενημέρωση έγινε σήμερα, αλλιώς και ημερομηνία («14 Νοε 07:05»)
+function fmtShort(dt) {
+  const o = { timeZone: 'Europe/Athens' };
+  const day = d => new Intl.DateTimeFormat('en-CA', o).format(d);
+  const time = new Intl.DateTimeFormat('el-GR', { ...o, hour: '2-digit', minute: '2-digit', hour12: false }).format(dt);
+  if (day(dt) === day(new Date())) return time;
+  return new Intl.DateTimeFormat(lang === 'el' ? 'el-GR' : 'en-GB', { ...o, day: 'numeric', month: 'short' }).format(dt).replace('.', '') + ' ' + time;
+}
 function renderUpd() {
   Object.keys(UPD).forEach(k => {
     const card = document.querySelector('.card[data-k="' + k + '"]');
     if (!card) return;
     const stale = (Date.now() - UPD[k]) / 3600000 > SRC[k][2];
     card.classList.toggle('is-stale', stale);
+    const mt = card.querySelector('.mtime');
+    if (mt) mt.textContent = (stale ? '\u26A0 ' : '') + fmtShort(UPD[k]);
     const el = card.querySelector('.upd');
     el.textContent = (stale ? '\u26A0 ' : '') + fmtUpd(UPD[k]);
     el.title = stale ? T[lang].stale : '';
